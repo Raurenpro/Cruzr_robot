@@ -2,10 +2,12 @@ package com.example.robot_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ubtechinc.cruzr.sdk.dance.DanceConnectionListener;
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Button btn;
+    private TextView topic_text;
+    private TextView connect_text;
     private static final String TAG = "MyTag";
     private String topic, clientID;
     private MqttAndroidClient client;
@@ -47,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         btn = findViewById(R.id.btn_sub);
         clientID = "cruzr_robot";
         topic = "cruzr/obuda";
+        topic_text = findViewById(R.id.topic_text);
+        topic_text.setText(topic);
+        connect_text = findViewById(R.id.connect_text);
         client =
                 new MqttAndroidClient(this.getApplicationContext(), "tcp://broker.hivemq.com:1883",
                         clientID);
@@ -65,14 +72,16 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     // We are connected
-                    Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
                     sub();
+                    connect_text.setText("Connected");
+                    connect_text.setTextColor(Color.GREEN);
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     // Something went wrong e.g. connection timeout or firewall problems
-                    Toast.makeText(MainActivity.this, "NoConnected", Toast.LENGTH_SHORT).show();
+                    connect_text.setText("Not Connected");
+                    connect_text.setTextColor(Color.RED);
                 }
             });
         } catch (MqttException e) {
@@ -91,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    Toast.makeText(MainActivity.this, new String(message.getPayload()), Toast.LENGTH_SHORT).show();
 
                     String msg = new String(message.getPayload());
 
