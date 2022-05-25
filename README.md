@@ -19,5 +19,3 @@ To install :
 -----
 
 After the installation is finished, press the "SUB" button to connect the robot to the mqtt broker
-
-Translated with www.DeepL.com/Translator (free version)
